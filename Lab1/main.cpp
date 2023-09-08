@@ -1,7 +1,7 @@
 #include <iostream>
 
 class cl1{
-    
+
 };
 
 int main() {
