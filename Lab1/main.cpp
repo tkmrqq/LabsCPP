@@ -1,35 +1,21 @@
-#include <cstdio>
-#include <iostream>
-
-#define PI 3.14159265358979
-
-using namespace std;
-
-class Circle {
-  double radius = 0;
-
-public:
-  double getRadius() { return radius; }
-
-  void setRadius(double radius_t) { radius = radius_t; }
-
-  double findSquare() { return (this->radius * this->radius * PI); }
-
-  double findLength() { return (2 * this->radius * PI); }
-};
+#include "header.h"
 
 double check() {
   double radius;
-  try {
-    cout << "Input value: ";
-    cin >> radius;
-    if (radius < 0 || cin.fail() || cin.peek() != '\n') {
-      fflush(stdin);
-      cin.clear();
-      throw invalid_argument("Error! Invalid Input! Enter double or int value");
+  while(true){
+    try {
+      cout << "Input value: ";
+      cin >> radius;
+      if (radius < 0 || cin.fail() || cin.peek() != '\n') {
+        fflush(stdin);
+        cin.clear();
+        radius = 0;
+        throw invalid_argument("Error! Invalid Input! Enter double or int value(positive value); Try again!");
+      }
+      else break;
+    } catch (const invalid_argument &e) {
+      cerr << e.what() << endl;
     }
-  } catch (const invalid_argument &e) {
-    cerr << e.what() << endl;
   }
   return radius;
 }
@@ -42,6 +28,10 @@ void menu() {
     cout << "==========\nMenu:\n1) Set Radius\n2) Show Radius\n3) Show "
             "Length\n4) Show Square\n5) Exit\n";
     cin >> choice;
+    if(!cin.good()){
+      cin.clear();
+      fflush(stdin);
+    }
     switch (choice) {
     case 1:
       circle.setRadius(check());
@@ -62,4 +52,11 @@ void menu() {
   }
 }
 
-int main() { menu(); }
+int main() {
+  int n;
+  Circle *circle = new Circle[n];
+  delete[] circle;
+  
+  menu();
+  return 0;
+}
