@@ -2,39 +2,51 @@
 
 double check() {
   double radius;
-  while(true){
-    try {
-      cout << "Input value: ";
-      cin >> radius;
-      if (radius < 0 || cin.fail() || cin.peek() != '\n') {
-        fflush(stdin);
-        cin.clear();
-        radius = 0;
-        throw invalid_argument("Error! Invalid Input! Enter double or int value(positive value); Try again!");
-      }
-      else break;
-    } catch (const invalid_argument &e) {
-      cerr << e.what() << endl;
-    }
+  cout << "Input radius: ";
+  while (true) {
+    cin >> radius;
+    if (!cin.good() || radius <= 0) {
+      cout << "Invalid value, try again!" << endl;
+      cin.clear();
+      fflush(stdin);
+    } else return radius;
   }
-  return radius;
 }
 
-void menu() {
-  Circle circle;
-  int choice;
-
-  while (true) {
-    cout << "==========\nMenu:\n1) Set Radius\n2) Show Radius\n3) Show "
-            "Length\n4) Show Square\n5) Exit\n";
-    cin >> choice;
+double inputAngle(){
+  cout << "Input angle of the sector: ";
+  double angle;
+  while(true){
+    cin >> angle;
+    if (angle < 0) angle *=-1;
     if(!cin.good()){
+      cout << "Invalid value, try again!" << endl;
       cin.clear();
       fflush(stdin);
     }
+    else return angle;
+  }
+}
+
+void menu(Circle circle) {
+  int choice;
+  double radius;
+  double angle;
+
+  while (true) {
+    cout << "==========\nMenu:\n1) Change radius\n2) Show radius\n3) Find "
+            "length\n4) Find arc length\n5) Find square\n6) Find area of the sector\n7) Exit\n";
+    cin >> choice;
+    if (!cin.good() || choice <= 0 || choice > 5) {
+      cin.clear();
+      fflush(stdin);
+    }
+
     switch (choice) {
     case 1:
-      circle.setRadius(check());
+      radius = check();
+      circle.setRadius(radius);
+      break;
     case 2:
       cout << "Current Radius = " << circle.getRadius() << endl;
       break;
@@ -42,9 +54,17 @@ void menu() {
       cout << "Length of circle = " << circle.findLength() << endl;
       break;
     case 4:
-      cout << "Square of circle = " << circle.findSquare() << endl;
+      angle = inputAngle();
+      cout << "Length of arc = " << circle.findLength(angle) << endl;
       break;
     case 5:
+      cout << "Square of circle = " << circle.findSquare() << endl;
+      break;
+    case 6:
+      angle = inputAngle();
+      cout << "Area of the sector = " << circle.findSquare(angle) << endl;
+      break;
+    case 7:
       exit(EXIT_SUCCESS);
     default:
       cout << "Invalid input!";
@@ -53,10 +73,9 @@ void menu() {
 }
 
 int main() {
-  int n;
-  Circle *circle = new Circle[n];
-  delete[] circle;
-  
-  menu();
+  double radius = check();
+  Circle circle(radius);
+  Circle circle3 = circle + 30;
+  menu(circle3);
   return 0;
 }
