@@ -75,7 +75,7 @@ void menu(Circle circle) {
 int main() {
   double radius = check();
   Circle circle(radius);
-  Circle circle3 = circle + 30;
-  menu(circle3);
+//  Circle circle3 = circle + 30;
+  menu(circle);
   return 0;
 }

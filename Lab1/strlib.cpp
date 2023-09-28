@@ -1,47 +1,95 @@
 #include "strlib.h"
 
-size_t getLength(const char *str){
+size_t getLength(const char *str) {
   size_t len = 0;
-  for (int i = 0; str[i] != '\0' ; ++i) {
+  for (int i = 0; str[i] != '\0'; ++i) {
     len++;
   }
   return len;
 }
 
-void copyStr(char *str1, const char *str2){
-  for (int i = 0; str1[i] != '\0' ; ++i) {
-    str1[i] = str2[i];
-  }
+size_t MyString::getLen() const {
+  return this->length;
 }
 
-int main(){
-  MyString str1("str1"), str2("str2"), str3;
-  str3 = str1 + str2;
-  MyString str4("str4");
-  MyString str5("str5");
-//  str1.print();
-//  std::cout << '\n';
-//  str2.print();
-//  std::cout << '\n';
-//  str3.print();
-//  std::cout << '\n';
+MyString::MyString(const char *str_t) {
+  length = getLength(str_t);
+  str = new char[length + 1];
+  strcpy(str, str_t);
+}
 
-  str4 += str5;
+MyString::MyString(const MyString &other) {
+  length = other.length;
+  str = new char[length + 1];
+  strcpy(str, other.str);
+}
 
-  str4.print();
-  std::cout << "\n";
+bool MyString::operator!=(const MyString &other) const { return !(*this == other); }
 
-  std::cout << "Ishodnaya stroka: " << str4 << std::endl << "Obrezanaya stroka: " << str4(0,1)<< std::endl;
+bool MyString::operator==(const MyString &other) const {
+  if (strcmp(str, other.str) == 0) {
+    return true;
+  } else
+    return false;
+}
 
-//  std::cout << "str[i] = " << str4[8];
+MyString MyString::operator+(const MyString &other) const {
+  MyString result;
+  result.length = length + other.length;
+  result.str = new char[result.length + 1];
 
-//  if(str5 == str4){
-//    std::cout << "Strs equal" << std::endl;
-//  }
-//
-//  if(str3 != str1){
-//    std::cout << "Strs differ" << std::endl;
-//  }
+  strcpy(result.str, str);
+  strcat(result.str, other.str);
 
-  return 0;
+  return result;
+}
+
+MyString &MyString::operator=(const MyString &other) {
+  if (this == &other)
+    return *this;
+  delete[] str;
+
+  length = other.length;
+  str = new char[length + 1];
+  strcpy(str, other.str);
+
+  return *this;
+}
+
+MyString &MyString::operator+=(const MyString &other) {
+  char *temp = new char[length + other.length + 1];
+  strcpy(temp, str);
+  strcat(temp, other.str);
+
+  delete[] str;
+
+  str = temp;
+  length += other.length;
+
+  return *this;
+}
+
+char MyString::operator[](int index) const {
+  if (index < 0 || index > length - 1)
+    throw std::invalid_argument(
+        "You must to refer only to existing elements");
+  return str[index];
+}
+
+MyString MyString::operator()(int start, int end) const {
+  if (start < 0 || start >= length || end < 0 || end >=length || start > end){
+    throw std::invalid_argument("Please input correct values");
+  }
+
+  int temp_length = end - start + 1;
+  char *temp = new char[temp_length + 1];
+
+  for (int i = 0; i<temp_length; i++) {
+    temp[i] = str[start + i];
+  }
+  temp[temp_length] = '\0';
+
+  MyString tempStr(temp);
+  delete[] temp;
+  return tempStr;
 }

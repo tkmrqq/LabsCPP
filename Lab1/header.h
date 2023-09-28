@@ -38,8 +38,10 @@ public:
   }
 
   Circle operator & (const Circle& circle) const {
-    return Circle(radius + circle.radius);
+    return Circle(radius * circle.radius);
   }
+
+
 
 };
 
