@@ -5,7 +5,7 @@ int check_int() {
     while (true) {
         std::cin >> value;
         if (!std::cin.good() || value <= 0) {
-            std::cout << "Invalid value, try again!" << std::endl;
+            std::cout << "Invalid value, try again(check)!" << std::endl;
             std::cin.clear();
             fflush(stdin);
         } else
@@ -21,17 +21,17 @@ void Title::setLanguage(Language language) {
     this->lng = language;
 }
 
-const char* Title::getLanguage() {
+const char *Title::getLanguage() {
     switch (lng) {
-        case Language::Russian:
+        case Language::Ru:
             return "Russian";
-        case Language::English:
+        case Language::En:
             return "English";
-        case Language::Japanese:
+        case Language::Jp:
             return "Japanese";
-        case Language::Chinese:
+        case Language::Ch:
             return "Chinese";
-        case Language::Korean:
+        case Language::Kr:
             return "Korean";
     }
 }
@@ -105,27 +105,27 @@ Language askLanguage() {
     std::cin >> choice;
     switch (choice) {
         case 1:
-            return Language::Russian;
+            return Language::Ru;
         case 2:
-            return Language::English;
+            return Language::En;
         case 3:
-            return Language::Japanese;
+            return Language::Jp;
         case 4:
-            return Language::Chinese;
+            return Language::Ch;
         case 5:
-            return Language::Korean;
+            return Language::Kr;
         default:
-            std::cout << "The language is not supported! Setting English!" << std::endl;
+            std::cout << "The language is not supported! Setting En!" << std::endl;
     }
-    return Language::English;
+    return Language::En;
 }
 
-Movie createMovie(Movie movie){
+Movie createMovie(Movie movie) {
     char title[LEN];
     Language lng;
 
     std::cout << "Input title: ";
-    std::cin.getline(title, LEN);
+    std::cin.getline(title, LEN) >> title;
     movie.setTitle(title);
     lng = askLanguage();
     movie.setLanguage(lng);
@@ -135,12 +135,12 @@ Movie createMovie(Movie movie){
     return movie;
 }
 
-Comic createComic(Comic comic){
+Comic createComic(Comic comic) {
     char title[LEN];
     Language lng;
 
     std::cout << "Input title: ";
-    std::cin.getline(title, LEN);
+    std::cin.getline(title, LEN) >> title;
     comic.setTitle(title);
     lng = askLanguage();
     comic.setLanguage(lng);
@@ -150,12 +150,12 @@ Comic createComic(Comic comic){
     return comic;
 }
 
-Show createShow(Show show){
+Show createShow(Show show) {
     char title[LEN];
     Language lng;
 
     std::cout << "Input title: ";
-    std::cin.getline(title, LEN);
+    std::cin.getline(title, LEN) >> title;
     show.setTitle(title);
     lng = askLanguage();
     show.setLanguage(lng);
@@ -166,14 +166,13 @@ Show createShow(Show show){
     return show;
 }
 
-MultiSeasonShow createMultiShow(MultiSeasonShow mShow){
+MultiSeasonShow createMultiShow() {
     char title[LEN];
     Language lng;
     std::cout << "Input title: ";
-    std::cin.getline(title, LEN);
-    mShow.setTitle(title);
+    std::cin.getline(title, LEN) >> title;
     lng = askLanguage();
-    mShow.setLanguage(lng);
+    MultiSeasonShow mShow{title, lng};
     mShow.setDuration();
     mShow.setRate();
     mShow.setEpisodeCount();
@@ -182,31 +181,88 @@ MultiSeasonShow createMultiShow(MultiSeasonShow mShow){
     return mShow;
 }
 
+void inputObj(Movie &movie, Comic &comic, Show &show, MultiSeasonShow &mShow) {
+
+    std::cout << "1. Movie\n2. Comic\n3. Show\n4. Multi season show" << std::endl;
+    int choice;
+    choice = check_int();
+    switch (choice) {
+        case 1:
+            std::cout << "Create a movie object" << std::endl;
+            movie = createMovie(movie);
+            break;
+        case 2:
+            std::cout << "Create a comic object" << std::endl;
+            comic = createComic(comic);
+            break;
+        case 3:
+            std::cout << "Create a show object" << std::endl;
+            show = createShow(show);
+            break;
+        case 4:
+            std::cout << "Create a multi season show object" << std::endl;
+            mShow = createMultiShow();
+            break;
+        default:
+            std::cout << "Invalid input (in input obj)" << std::endl;
+            break;
+    }
+}
+
+void printObj(Movie movie, Comic comic, Show show, MultiSeasonShow mShow) {
+    int choice;
+    std::cout << "What object you want to print?" << std::endl;
+    std::cout << "1. Movie\n2. Comic\n3. Show\n4. Multi season show" << std::endl;
+
+    choice = check_int();
+    switch (choice) {
+        case 1:
+            std::cout << "[=Movie=]" << std::endl;
+            movie.displayInfo();
+            break;
+        case 2:
+            std::cout << "[=Comic=]" << std::endl;
+            comic.displayInfo();
+            break;
+        case 3:
+            std::cout << "[=Show=]" << std::endl;
+            show.displayInfo();
+            break;
+        case 4:
+            std::cout << "[=Multi Season Show=]" << std::endl;
+            mShow.displayInfo();
+            break;
+        default:
+            std::cout << "Invalid input (in print obj)" << std::endl;
+            break;
+    }
+}
+
 int main() {
-    Movie movie{};
-    Comic comic{};
-    Show show{};
-    MultiSeasonShow mShow{};
+    Movie movie{"movie", Language::En};
+    Comic comic{"comic", Language::Ch};
+    Show show{"show", Language::Jp};
+    MultiSeasonShow mShow{"mShow", Language::Kr};
 
-    std::cout << "Create a movie object" << std::endl;
-    movie = createMovie(movie);
+    while (true) {
+        int choice;
 
-    std::cout << "Create a comic object" << std::endl;
-    comic = createComic(comic);
+        std::cout << "1. Input object\n2. Print object\n3. Exit" << std::endl;
+        choice = check_int();
 
-    std::cout << "Create a show object" << std::endl;
-    show = createShow(show);
-
-    std::cout << "Create a multi season show object" << std::endl;
-    mShow = createMultiShow(mShow);
-
-    std::cout << "[=Movie=]" << std::endl;
-    movie.displayInfo();
-    std::cout << "[=Comic=]" << std::endl;
-    comic.displayInfo();
-    std::cout << "[=Show=]" << std::endl;
-    show.displayInfo();
-    std::cout << "[=Multi Season Show=]" << std::endl;
-    mShow.displayInfo();
-    return 0;
+        std::cout << "Choice: " << choice << std::endl;
+        switch (choice) {
+            case 1:
+                inputObj(movie, comic, show, mShow);
+                break;
+            case 2:
+                printObj(movie, comic, show, mShow);
+                break;
+            case 3:
+                return EXIT_SUCCESS;
+            default:
+                std::cout << "Invalid input!" << std::endl;
+                break;
+        }
+    }
 }

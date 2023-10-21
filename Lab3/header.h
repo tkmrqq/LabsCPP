@@ -7,12 +7,22 @@
 
 int check_int();
 
-enum class Language {Russian, English, Japanese, Chinese, Korean};
+enum class Language { Ru,
+                      En,
+                      Jp,
+                      Ch,
+                      Kr };
 
 class Title{
-    char title[LEN];
+    char title[LEN]{};
     Language lng;
 public:
+
+    Title(const char* t, Language l){
+        strncpy(title, t, LEN);
+        lng = l;
+    }
+
     const char *getTitle() const {
         return title;
     }
@@ -31,6 +41,7 @@ class Movie : public Title{
     int duration{};
     int rate{};
 public:
+    Movie(const char* t, Language l) : Title(t,l) {}
     int getDuration();
     void setDuration();
     int getRate();
@@ -48,6 +59,7 @@ class Comic : public Title{
     int releaseCount{};
     int pagesCount{};
 public:
+    Comic(const char* t, Language l) : Title(t,l) {}
     int getReleaseCount() const;
     void setReleaseCount();
     int getPagesCount() const;
@@ -64,6 +76,7 @@ public:
 class Show : public Movie{
     int episodeCount{};
 public:
+    Show(const char* t, Language l) : Movie(t,l) {}
     int getEpisodeCount();
     void setEpisodeCount();
 
@@ -75,8 +88,10 @@ public:
 };
 
 class MultiSeasonShow : public Show{
+
     int seasonsCount{};
 public:
+    MultiSeasonShow(const char* t, Language l) : Show(t,l) {}
     int getSeasonsCount();
     void setSeasonsCount();
 
