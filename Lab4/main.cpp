@@ -73,7 +73,7 @@ bool Stack<T>::isFull(){
 int main() {
     Stack<int> stack;
 
-    for (int i = 1; i < 10002; ++i) {
+    for (int i = 1; i < 10; ++i) {
         stack.push(i);
     }
 
@@ -81,6 +81,7 @@ int main() {
     std::cout << "Size is: " << stack.size() << std::endl;
     std::cout << "\n";
     stack.pop();
-//    stack.print();
+    std::cout << stack.topEl();
+    std::cout << "Peek: "<< stack.peek();
     return 0;
 }
