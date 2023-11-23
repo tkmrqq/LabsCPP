@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <iostream>
+#include "exp.h"
 #define LEN 25
 
 int check_int();
