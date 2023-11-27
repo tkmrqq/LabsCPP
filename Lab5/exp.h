@@ -6,7 +6,7 @@
 
 class Exp {
     int code;
-    char msg[80];
+    char msg[80]{};
 
 public:
     Exp();
@@ -15,7 +15,9 @@ public:
 };
 
 Exp::Exp() {
+    code = 0;
 }
+
 Exp::Exp(int code_t, char msg_t[80]) {
     code = code_t;
     strcpy(msg, msg_t);
