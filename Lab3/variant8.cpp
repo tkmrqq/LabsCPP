@@ -4,16 +4,17 @@ int check_int() {
     int value;
     while (true) {
         std::cin >> value;
-        if (!std::cin.good() || value <= 0) {
+        if (!std::cin.good()) {
             std::cin.clear();
             fflush(stdin);
-            throw Exp(105, "Invalid input."); //mb should change to cout
+            std::cout << "Bad value! Try again." << std::endl;
         } else
             return value;
     }
 }
 
 void Title::setTitle(char title_t[LEN]) {
+    checkChar(title_t);
     strcpy(title, title_t);
 }
 
@@ -40,10 +41,8 @@ int Movie::getDuration() {
     return this->duration;
 }
 
-void Movie::setDuration() {
-    int duration_t;
-    std::cout << "Input a duration: ";
-    duration_t = check_int();
+void Movie::setDuration(int duration_t) {
+    checkField(duration_t);
     this->duration = duration_t;
 }
 
@@ -51,29 +50,24 @@ int Movie::getRate() {
     return this->rate;
 }
 
-void Movie::setRate() {
-    int rate_t;
-    std::cout << "Input rate of movie: ";
-    rate_t = check_int();
+void Movie::setRate(int rate_t) {
+    checkField(rate_t);
     this->rate = rate_t;
 }
 
 int Comic::getReleaseCount() const {
     return this->releaseCount;
 }
-void Comic::setReleaseCount() {
-    int releaseCount_t;
-    std::cout << "Input count of releases: ";
-    releaseCount_t = check_int();
+void Comic::setReleaseCount(int releaseCount_t) {
+    checkField(releaseCount_t);
     this->releaseCount = releaseCount_t;
 }
 int Comic::getPagesCount() const {
     return this->pagesCount;
 }
-void Comic::setPagesCount() {
-    int pagesCount_t;
-    std::cout << "Input count of pages: ";
-    pagesCount_t = check_int();
+
+void Comic::setPagesCount(int pagesCount_t) {
+    checkField(pagesCount_t);
     this->pagesCount = pagesCount_t;
 }
 
@@ -81,17 +75,13 @@ int Show::getEpisodeCount() {
     return this->episodeCount;
 }
 
-void Show::setEpisodeCount() {
-    int episodeCount_t;
-    std::cout << "Input count of episodes: ";
-    episodeCount_t = check_int();
+void Show::setEpisodeCount(int episodeCount_t) {
+    checkField(episodeCount_t);
     this->episodeCount = episodeCount_t;
 }
 
-void MultiSeasonShow::setSeasonsCount() {
-    int seasonsCount_t;
-    std::cout << "Input count of seasons: ";
-    seasonsCount_t = check_int();
+void MultiSeasonShow::setSeasonsCount(int seasonsCount_t) {
+    checkField(seasonsCount_t);
     this->seasonsCount = seasonsCount_t;
 }
 
@@ -129,8 +119,12 @@ Movie createMovie(Movie movie) {
     movie.setTitle(title);
     lng = askLanguage();
     movie.setLanguage(lng);
-    movie.setDuration();
-    movie.setRate();
+    std::cout << "Input duration " << std::endl;
+    int duration = check_int();
+    movie.setDuration(duration);
+    std::cout << "Input rate " << std::endl;
+    int rate = check_int();
+    movie.setRate(rate);
     fflush(stdin);
     return movie;
 }
@@ -144,8 +138,10 @@ Comic createComic(Comic comic) {
     comic.setTitle(title);
     lng = askLanguage();
     comic.setLanguage(lng);
-    comic.setPagesCount();
-    comic.setReleaseCount();
+    int pageCount = check_int();
+    comic.setPagesCount(pageCount);
+    int releaseCount = check_int();
+    comic.setReleaseCount(releaseCount);
     fflush(stdin);
     return comic;
 }
@@ -159,9 +155,9 @@ Show createShow(Show show) {
     show.setTitle(title);
     lng = askLanguage();
     show.setLanguage(lng);
-    show.setDuration();
-    show.setRate();
-    show.setEpisodeCount();
+    show.setDuration(1);
+    show.setRate(1);
+    show.setEpisodeCount(1);
     fflush(stdin);
     return show;
 }
@@ -170,19 +166,24 @@ MultiSeasonShow createMultiShow() {
     char title[LEN];
     Language lng;
     std::cout << "Input title: ";
-    std::cin.getline(title, LEN) >> title;
+    std::cin.getline(title, LEN);
+    MultiSeasonShow mShow("", Language::Ru);
+    mShow.setTitle(title);
     lng = askLanguage();
-    MultiSeasonShow mShow{title, lng};
-    mShow.setDuration();
-    mShow.setRate();
-    mShow.setEpisodeCount();
-    mShow.setSeasonsCount();
+    mShow.setLanguage(lng);
+    int duration = check_int();
+    mShow.setDuration(duration);
+    int rate = check_int();
+    mShow.setRate(rate);
+    int episodeCount = check_int();
+    mShow.setEpisodeCount(episodeCount);
+    int seasonCount = check_int();
+    mShow.setSeasonsCount(seasonCount);
     fflush(stdin);
     return mShow;
 }
 
 void inputObj(Movie &movie, Comic &comic, Show &show, MultiSeasonShow &mShow) {
-
     std::cout << "1. Movie\n2. Comic\n3. Show\n4. Multi season show" << std::endl;
     int choice;
     choice = check_int();
@@ -205,7 +206,6 @@ void inputObj(Movie &movie, Comic &comic, Show &show, MultiSeasonShow &mShow) {
             break;
         default:
             throw Exp(105, "Invalid input");
-            break;
     }
 }
 
@@ -235,37 +235,5 @@ void printObj(Movie movie, Comic comic, Show show, MultiSeasonShow mShow) {
         default:
             std::cout << "Invalid input (in print obj)" << std::endl;
             break;
-    }
-}
-
-int main() {
-    Movie movie{"movie", Language::En};
-    Comic comic{"comic", Language::Ch};
-    Show show{"show", Language::Jp};
-    MultiSeasonShow mShow{"mShow", Language::Kr};
-    while (true) {
-        try {
-            int choice;
-
-            std::cout << "1. Input object\n2. Print object\n3. Exit" << std::endl;
-            choice = check_int();
-
-            std::cout << "Choice: " << choice << std::endl;
-            switch (choice) {
-                case 1:
-                    inputObj(movie, comic, show, mShow);
-                    break;
-                case 2:
-                    printObj(movie, comic, show, mShow);
-                    break;
-                case 3:
-                    return EXIT_SUCCESS;
-                default:
-                    std::cout << "Invalid input!" << std::endl;
-                    break;
-            }
-        } catch (Exp error) {
-            error.show();
-        }
     }
 }

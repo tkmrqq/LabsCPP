@@ -15,6 +15,8 @@ add_subdirectory(Lab4)
 add_subdirectory(Lab5)
 add_subdirectory(Lab6)
 
+target_link_libraries(Lab6 exp)
+
 add_executable(CW codewars.cpp)
 
 

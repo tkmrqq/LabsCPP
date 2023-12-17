@@ -3,5 +3,5 @@ project(Lab3)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Lab3_2 variant8.cpp inheritance.h)
+add_executable(Lab3_2 testExp.cpp inheritance.h)
 target_link_libraries(Lab3_2 exp)

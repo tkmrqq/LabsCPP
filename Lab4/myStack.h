@@ -3,7 +3,8 @@
 
 #include "exp.h"
 #include "iostream"
-#define MAX 2
+#include "fstream"
+#define MAX 100
 
 template <class T>
 class Stack{
@@ -19,20 +20,31 @@ public:
     bool isFull();
     bool push(const T& x);
     T pop();
-    T topEl();
     T peek();
-    T size();
+    size_t size();
     void print();
     void swap(Stack &obj);
 
+    void serialize(std::ostream& os) const {
+        os.write(reinterpret_cast<const char*>(&top), sizeof(top));
+        os.write(reinterpret_cast<const char*>(data), top * sizeof(T));
+    }
+
+    void deserialize(std::istream& is){
+        is.read(reinterpret_cast<char*>(&top), sizeof(top));
+        delete [] data;
+        data = new T[top];
+        is.read(reinterpret_cast<char*>(data), top * sizeof(T));
+    }
+
     ~Stack(){
-        delete[] data;
+//        delete[] data;
     }
 };
 
 template<class T>
 bool Stack<T>::isEmpty() {
-    return (top < 0);
+    return (top < 1);
 }
 
 template<class T>
@@ -62,27 +74,16 @@ T Stack<T>::pop() {
 }
 
 template<class T>
-T Stack<T>::topEl() {
-    if(!isEmpty()){
-        return data[top];
-    }
-    else {
-        std::cout << "Stack is empty" << std::endl;
-        return T();
-    }
-}
-
-template<class T>
 T Stack<T>::peek() {
     if (!isEmpty()) {
-        return data[top];
+        return data[top-1];
     } else {
         throw Exp(102, "Stack is empty");
     }
 }
 
 template<class T>
-T Stack<T>::size() {
+size_t Stack<T>::size() {
     return top;
 }
 
@@ -107,5 +108,36 @@ void Stack<T>::swap(Stack<T> &obj) {
     obj.data = tempData;
     obj.top = tempTop;
 }
+
+template <class T>
+void writeStackToFile(Stack<T>& myStack, std::string& filename) {
+    std::ofstream outputFile(filename);
+    if (outputFile.is_open()) {
+        Stack<T> tempStack = myStack;
+        while (!tempStack.isEmpty()) {
+            outputFile << tempStack.peek();
+            tempStack.pop();
+        }
+        outputFile.close();
+    } else {
+        throw Exp(200, "Can't open file to write");
+    }
+}
+
+template <class T>
+void readStackFromFile(Stack<T>& myStack, std::string& filename) {
+    std::ifstream inputFile(filename);
+    if (inputFile.is_open()) {
+        T tempObject;
+
+        while (inputFile >> tempObject) {
+            myStack.push(tempObject);
+        }
+        inputFile.close();
+    } else {
+        throw Exp(201, "Can't open file to read");
+    }
+}
+
 
 #endif//LAB4_MAIN_H
