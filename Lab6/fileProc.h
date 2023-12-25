@@ -10,12 +10,11 @@
 class File {
     char filename[80];
     std::fstream *fstr;
-    int maxpos;
-    void updateMaxPos();
 public:
     File(const char *filename);
     ~File();
     int open();
+    int openForRead();
     const char *getName();
 
     //write to file
@@ -52,14 +51,15 @@ int File::open() {
     return 0;
 }
 
-const char *File::getName() {
-    return this->filename;
+int File::openForRead() {
+    fstr->open(filename, std::ios::in);
+    if (!fstr->is_open()) return -1;
+    return 0;
 }
 
-void File::updateMaxPos() {
-    fstr->seekg(0, std::ios::end);
-    maxpos = fstr->tellg();
-    fstr->seekg(0, std::ios::beg);
+
+const char *File::getName() {
+    return this->filename;
 }
 
 template<class T>
@@ -68,7 +68,6 @@ void File::writeStack(Stack<T> &myStack) {
         Stack<T> tempStack = myStack;
         while (!tempStack.isEmpty()) {
             *fstr << tempStack.peek();
-            //            fstr->write(reinterpret_cast<const char*>(tempStack.peek()));
             tempStack.pop();
         }
         fstr->close();
@@ -92,10 +91,10 @@ void File::readStack(Stack<T> &myStack) {
         while (*fstr >> tempObject) {
             myStack.push(tempObject);
         }
-        fstr->close();
     } else {
         throw Exp(201, "Can't open file to read");
     }
+//    return myStack;
 }
 
 template<class T>

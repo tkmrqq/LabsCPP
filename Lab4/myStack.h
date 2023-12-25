@@ -11,10 +11,37 @@ class Stack{
     int top;
     T *data;
 public:
+    struct iterator {
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using value_type = T;
+        using pointer = T *;  // or also value_type*
+        using reference = T &;  // or also value_type&
+        iterator(pointer ptr) : m_ptr(ptr) {}
+
+
+        reference operator*() const { return *m_ptr; }
+        pointer operator->() const { return m_ptr; }
+
+        iterator& operator++() { m_ptr++; return *this; }
+        iterator& operator+(int val) { m_ptr+=val; return *this; }
+
+        iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+
+        friend bool operator== (const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr; };
+        friend bool operator!= (const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr; };
+
+    private:
+        pointer m_ptr;
+    };
+
     Stack(){
         top = 0;
         data = new T[0];
     }
+
+    iterator begin() { return iterator(&data[0]); }
+    iterator end() { return iterator(&data[top]); }
 
     bool isEmpty();
     bool isFull();

@@ -4,6 +4,7 @@
 #include "exp.h"
 #include <cstring>
 #include <iostream>
+#include "sstream"
 #define LEN 25
 
 int check_int();
@@ -120,14 +121,36 @@ public:
     //to file
     friend std::fstream &operator<<(std::fstream &os, MultiSeasonShow show);
     friend std::fstream &operator>>(std::fstream &is, MultiSeasonShow &show);
-    void serialize(std::ofstream& file) const;
+    void serialize(std::ofstream& file);
+    void deserialize(std::ifstream& file);
 };
 
-void MultiSeasonShow::serialize(std::ofstream& file) const {
+void MultiSeasonShow::serialize(std::ofstream& file) {
     file.write(reinterpret_cast<const char*>(&seasonsCount), sizeof(seasonsCount));
     char buffer[100];
     std::strcpy(buffer, getTitle());
     file.write(buffer, sizeof(buffer));
+}
+
+void MultiSeasonShow::deserialize(std::ifstream& file) {
+    file.read(reinterpret_cast<char*>(&seasonsCount), sizeof(seasonsCount));
+    char buffer[100];
+    file.read(buffer, sizeof(buffer));
+    setTitle(buffer);
+}
+
+Language convertLanguage(const std::string& languageStr) {
+    if (languageStr == "English") {
+        return Language::En;
+    } else if (languageStr == "Russian") {
+        return Language::Ru;
+    } else if (languageStr == "Japanese") {
+        return Language::Jp;
+    } else if (languageStr == "Chinese"){
+        return Language::Ch;
+    } else if (languageStr == "Korean"){
+        return Language::Kr;
+    }
 }
 
 std::fstream &operator<<(std::fstream &os, MultiSeasonShow show) {
@@ -141,19 +164,22 @@ std::fstream &operator<<(std::fstream &os, MultiSeasonShow show) {
 }
 
 std::fstream &operator>>(std::fstream &is, MultiSeasonShow &show) {
-    std::string title;
-    int languageInt, rate, duration, episodeCount, seasonsCount;
-
-    if (is >> title >> languageInt >> rate >> duration >> episodeCount >> seasonsCount) {
-        auto language = static_cast<Language>(languageInt);
-        show.setTitle("asd");
-        show.setLanguage(language);
-        show.setRate(rate);
-        show.setDuration(duration);
-        show.setEpisodeCount(episodeCount);
-        show.setSeasonsCount(seasonsCount);
+    std::string line;
+    if (std::getline(is, line)) {
+        std::istringstream iss(line);
+        std::string title;
+        std::string languageInt;
+        int rate, duration, episodeCount, seasonsCount;
+        if (iss >> title >> languageInt >> rate >> duration >> episodeCount >> seasonsCount) {
+            auto language = convertLanguage(languageInt);
+            show.setTitle(const_cast<char *>(title.c_str()));
+            show.setLanguage(language);
+            show.setRate(rate);
+            show.setDuration(duration);
+            show.setEpisodeCount(episodeCount);
+            show.setSeasonsCount(seasonsCount);
+        }
     }
-
     return is;
 }
 

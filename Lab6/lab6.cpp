@@ -2,19 +2,18 @@
 #include <fstream>
 #include <iostream>
 
-template <typename T>
-void objToFile(T& obj, const char* filename){
+template<typename T>
+void objToFile(T &obj, const char *filename) {
     std::ofstream outFile(filename);
     if (outFile.is_open()) {
         outFile << obj;
         outFile.close();
-    }
-    else {
+    } else {
         std::cerr << "Unable to open file for writing." << std::endl;
     }
 }
 
-void createObj(MultiSeasonShow& sh1, MultiSeasonShow& sh2, MultiSeasonShow& sh3){
+void createObj(MultiSeasonShow &sh1, MultiSeasonShow &sh2, MultiSeasonShow &sh3) {
     sh1.setTitle("KNY");
     sh1.setLanguage(Language::Jp);
     sh1.setRate(9);
@@ -37,37 +36,85 @@ void createObj(MultiSeasonShow& sh1, MultiSeasonShow& sh2, MultiSeasonShow& sh3)
     sh3.setDuration(120);
 }
 
-int main() {
+void writeTxt() {
+    std::string outFlName = "C:/GitHub/LabsCPP/allStack.txt";
+    Stack<MultiSeasonShow> showStack;
+    MultiSeasonShow sh1, sh2, sh3;
+
+    try {
+        File fl(outFlName.c_str());
+        createObj(sh1, sh2, sh3);
+        fl.open();
+        showStack.push(sh1);
+        showStack.push(sh2);
+        showStack.push(sh3);
+        std::cout << "Stack size: " << showStack.size() << std::endl;
+        fl.writeStack(showStack);
+    } catch (Exp &exp) {
+        exp.show();
+    }
+}
+
+void writeBin() {
     std::string outFlName = "C:/GitHub/LabsCPP/allStack.bin";
     Stack<MultiSeasonShow> showStack;
     MultiSeasonShow sh1, sh2, sh3;
-    createObj(sh1, sh2, sh3);
-//    try {
-//        showStack.push(sh1);
-//        showStack.push(sh2);
-//        showStack.push(sh3);
-//    } catch (Exp &exp) {
-//        exp.show();
-//    }
-//    std::cout << "Stack size: " << showStack.size() << std::endl;
-    File fl(outFlName.c_str());
-    fl.open();
-//    fl.writeStack(showStack);
-    fl.writeStackBin(showStack);
 
     try {
-        showStack = fl.readStackBin<MultiSeasonShow>();
-        
-        showStack.peek().displayInfo();
-        showStack.pop();
-        showStack.peek().displayInfo();
-        showStack.pop();
-        showStack.peek().displayInfo();
-    }
-    catch (Exp exp){
+        File fl(outFlName.c_str());
+        createObj(sh1, sh2, sh3);
+        fl.open();
+        showStack.push(sh1);
+        showStack.push(sh2);
+        showStack.push(sh3);
+        std::cout << "Stack size: " << showStack.size() << std::endl;
+        fl.writeStackBin(showStack);
+    } catch (Exp &exp) {
         exp.show();
     }
-    return 0;
+}
+
+void readTxt() {
+    try {
+        char outFlName[80] = "C:/GitHub/LabsCPP/allStack.txt";
+        File fl(outFlName);
+        fl.openForRead();
+        Stack<MultiSeasonShow> showStack;
+        fl.readStack(showStack);
+        //print stack
+        showStack.peek().displayInfo();
+        showStack.pop();
+        showStack.peek().displayInfo();
+        showStack.pop();
+        showStack.peek().displayInfo();
+    } catch (Exp &exp) {
+        exp.show();
+    }
+}
+
+void readBin() {
+    try {
+        char outFlName[80] = "C:/GitHub/LabsCPP/allStack.bin";
+        File fl(outFlName);
+        fl.openForRead();
+        Stack<MultiSeasonShow> showStack;
+        showStack = fl.readStackBin<MultiSeasonShow>();
+        //print stack
+        showStack.peek().displayInfo();
+        showStack.pop();
+        showStack.peek().displayInfo();
+        showStack.pop();
+        showStack.peek().displayInfo();
+    } catch (Exp &exp) {
+        exp.show();
+    }
 }
 
 
+int main() {
+    //writeTxt();
+    //writeBin();
+    //readTxt();
+    readBin();
+    return 0;
+}
